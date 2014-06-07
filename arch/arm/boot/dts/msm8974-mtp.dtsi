@@ -10,16 +10,17 @@
  * GNU General Public License for more details.
  */
 
-/include/ "dsi-panel-toshiba-720p-video.dtsi"
 /include/ "msm8974-camera-sensor-mtp.dtsi"
 /include/ "msm8974-leds.dtsi"
+/include/ "dsi-panel-jdi-1080p-video.dtsi"
+/include/ "dsi-panel-jdi-1080p-cmd.dtsi"
 
 &soc {
 	serial@f991e000 {
 		status = "ok";
 	};
 
-	qcom,mdss_dsi_toshiba_720p_video {
+	qcom,mdss_dsi_jdi_command_ors {
 		status = "ok";
 		qcom,cont-splash-enabled;
 	};
@@ -29,6 +30,37 @@
 	};
 
 	i2c@f9924000 {
+/*Edit start panel bringup 28/05/14*/
+/*  //delete by yubin, oppo, 2013.11.5
+		synaptics@20 {
+			compatible = "synaptics,rmi4";
+			reg = <0x20>;
+			interrupt-parent = <&msmgpio>;
+			interrupts = <61 0x2008>;
+			vdd-supply = <&pm8941_l18>;
+			vcc_i2c-supply = <&pm8941_lvs1>;
+			synaptics,reset-gpio = <&msmgpio 60 0x00>;
+			synaptics,irq-gpio = <&msmgpio 61 0x2008>;
+			synaptics,display-coords = <0 0 1079 1919>;
+			synaptics,i2c-pull-up;
+			synaptics,power-down;
+			synaptics,disable-gpios;
+			synaptics,do-lockdown;
+		};
+*/
+
+		synaptics-rmi-ts@20 {
+			compatible = "synaptics,rmi-ts";
+			reg = <0x20>;
+			interrupt-parent = <&msmgpio>;
+			interrupts = <61 0x8>;
+			synaptics,irq-gpio = <&msmgpio 61 0x00>;
+			synaptics,wakeup-gpio = <&msmgpio 57 0x00>;
+			synaptics,reset-gpio = <&msmgpio 60 0x00>;
+			synaptics,id-gpio = <&msmgpio 62 0x00>;
+			synaptics,id3-gpio = <&msmgpio 46 0x00>;
+		};
+/*Edit end panel bringup 28/05/14*/	
 		atmel_mxt_ts@4a {
 			compatible = "atmel,mxt-ts";
 			reg = <0x4a>;
@@ -43,6 +75,7 @@
 			atmel,i2c-pull-up;
 			atmel,no-force-update;
 			atmel,cfg_1 {
+				atmel,fw-name = "atmel_8974_fluid_v1_0_AA.hex";
 				atmel,family-id = <0x82>;
 				atmel,variant-id = <0x19>;
 				atmel,version = <0x10>;
